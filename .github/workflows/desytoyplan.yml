@@ -33,15 +33,11 @@ jobs:
         run: terraform init
 
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -out=tfplan
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve tfplan
 
       - name: SSH into VM
         run: |
           ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} azureuser@<VM_IP_ADDRESS> "echo 'SSH successful'"
-
-      - name: Terraform Destroy
-        if: always()
-        run: terraform destroy -auto-approve
