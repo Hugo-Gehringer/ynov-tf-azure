@@ -40,4 +40,4 @@ jobs:
 
       - name: SSH into VM
         run: |
-          ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} azureuser@<VM_IP_ADDRESS> "echo 'SSH successful'"
+          ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PUBLIC_KEY }} azureuser@<VM_IP_ADDRESS> "echo 'SSH successful'"
