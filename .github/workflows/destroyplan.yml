@@ -1,16 +1,12 @@
-# .github/workflows/azure-infrastructure.yml
+# .github/workflows/azure-destroy.yml
 
-name: Azure Infrastructure CI
+name: Azure Infrastructure Destroy
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
-  build:
+  destroy:
     runs-on: ubuntu-latest
 
     steps:
@@ -32,12 +28,11 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Terraform Plan
-        run: terraform plan -out=tfplan
+      - name: Download Terraform Plan
+        uses: actions/download-artifact@v3
+        with:
+          name: terraform-plan
+          path: tfplan
 
-      - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
-
-      - name: SSH into VM
-        run: |
-          ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} azureuser@<VM_IP_ADDRESS> "echo 'SSH successful'"
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve tfplan
