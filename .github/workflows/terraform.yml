@@ -36,8 +36,5 @@ jobs:
         run: terraform plan -out=tfplan
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
+        run: terraform apply -auto-approve -var="ssh_key=${{ secrets.SSH_PUBLIC_KEY }}" tfplan
 
-      - name: SSH into VM
-        run: |
-          ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PUBLIC_KEY }} azureuser@<VM_IP_ADDRESS> "echo 'SSH successful'"
