@@ -1,36 +1,47 @@
-# This is a basic workflow to help you get started with Actions
+# .github/workflows/azure-infrastructure.yml
 
-name: CI
+name: Azure Infrastructure CI
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Login to Azure
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          az login --service-principal \
+            -u ${{ secrets.AZURE_CLIENT_ID }} \
+            -p ${{ secrets.AZURE_CLIENT_SECRET }} \
+            --tenant ${{ secrets.AZURE_TENANT_ID }}
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.0.0
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+
+      - name: SSH into VM
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} azureuser@<VM_IP_ADDRESS> "echo 'SSH successful'"
+
+      - name: Terraform Destroy
+        if: always()
+        run: terraform destroy -auto-approve
