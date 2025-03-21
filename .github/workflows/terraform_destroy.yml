@@ -1,14 +1,10 @@
-name: Azure Infrastructure CI
+name: Azure Infrastructure Destroy
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
-  build:
+  destroy:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,14 +26,5 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Terraform Plan
-        run: terraform plan -out=tfplan -var="ssh_key=${{ secrets.SSH_PUBLIC_KEY }}"
-
-      - name: Upload Terraform Plan
-        uses: actions/upload-artifact@v3
-        with:
-          name: terraform-plan
-          path: tfplan
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve tfplan
