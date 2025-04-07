@@ -10,7 +10,7 @@ jobs:
     env:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
     steps:
@@ -33,7 +33,7 @@ jobs:
         run: terraform init
 
       - name: Terraform Plan (Destroy)
-        run: terraform plan -destroy -var="ssh_key=${{ secrets.SSH_PUBLIC_KEY }}" -input=false
+        run: terraform plan -destroy -var="ssh_key=${{ secrets.SSH_PUBLIC_KEY}}" -input=false
 
       - name: Terraform Destroy
         run: terraform destroy -auto-approve -var="ssh_key=${{ secrets.SSH_PUBLIC_KEY }}" -input=false
