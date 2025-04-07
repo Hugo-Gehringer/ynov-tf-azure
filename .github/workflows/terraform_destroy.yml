@@ -26,5 +26,8 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
+      - name: Terraform Plan (Destroy)
+        run: terraform plan -destroy -var="ssh_key=${{ secrets.SSH_KEY }}" -input=false
+
       - name: Terraform Destroy
-        run: terraform destroy -auto-approve tfplan
+        run: terraform destroy -auto-approve -var="ssh_key=${{ secrets.SSH_KEY }}"  tfplan
