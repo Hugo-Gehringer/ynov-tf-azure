@@ -42,7 +42,7 @@ jobs:
         run: terraform init
 
       - name: Terraform Plan
-        run: terraform plan -input=false -var="ssh_key=${{ secrets.SSH_KEY }}" -out=hugogehringer.tfstate
+        run: terraform plan -input=false -var="ssh_key=${{ secrets.SSH_PUBLIC_KEY}}" -out=hugogehringer.tfstate
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
